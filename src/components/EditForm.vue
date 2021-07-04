@@ -1,0 +1,151 @@
+<template>
+  <v-dialog v-model="dialog" max-width="600px">
+    <template v-slot:activator="{ on }">
+      <a v-on="on" @click="editProduct" class="black--text text-decoration-none"
+        >Edit</a
+      >
+    </template>
+    <v-card>
+      <v-card-title>
+        <h3>Edit Product</h3>
+        <v-spacer></v-spacer>
+        <v-btn @click="dialog = false" icon>
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
+      <v-card-text>
+        <v-form class="px-3">
+          <v-responsive>
+            <v-img :src="image_url" :class="{ 'd-none': !image }"></v-img>
+          </v-responsive>
+          <v-file-input
+            accept="image/*"
+            label="Image"
+            @change="loadFile($event)"
+            v-model="image"
+          ></v-file-input>
+          <v-text-field label="Name" v-model="name"></v-text-field>
+          <v-text-field
+            type="number"
+            prefix="Rp"
+            label="Price"
+            v-model="price"
+          ></v-text-field>
+          <v-row>
+            <v-col cols="12" sm="6" md="6">
+              <v-text-field
+                type="number"
+                suffix="pcs"
+                label="Stock"
+                v-model="stock"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6" md="6">
+              <v-select
+                v-model="select"
+                :items="items"
+                label="Category"
+                required
+              ></v-select>
+            </v-col>
+          </v-row>
+          <v-text-field class="" label="URL" v-model="image_url"></v-text-field>
+          <v-btn class="mr-4" @click="submit">
+            submit
+          </v-btn>
+          <v-btn @click="clear">
+            clear
+          </v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script>
+export default {
+  name: "EditForm",
+  props: ["product"],
+  data() {
+    return {
+      name: "",
+      price: "",
+      stock: "",
+      category: "",
+      image_url: "",
+      image: null,
+      select: null,
+      items: ["T-Shirts", "Shirts", "Pants", "Outers", "Accessories"],
+      dialog: false
+    };
+  },
+  methods: {
+    editProduct() {
+      this.name = this.product.name;
+      this.price = this.product.price;
+      this.stock = this.product.stock;
+      this.select = this.product.category;
+      this.image_url = this.product.image_url;
+    },
+    submit() {
+      const formData = new FormData();
+      formData.append("file", this.file);
+
+      this.$axios
+        .post("products/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(result => {
+          console.log(result);
+          this.clear();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+      this.$axios({
+        method: "POST",
+        url: "/products",
+        headers: {
+          access_token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
+        },
+        data: {
+          name: this.name,
+          price: this.price,
+          stock: this.stock,
+          image_url: this.image_url,
+          category: this.select
+        }
+      })
+        .then(result => {
+          console.log(result);
+          this.clear();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    clear() {
+      // this.$v.$reset();
+      this.name = "";
+      this.price = "";
+      this.stock = "";
+      this.image_url = "";
+      this.select = null;
+      this.image = null;
+    },
+    loadFile(event) {
+      this.image_url = URL.createObjectURL(this.image);
+      this.file = event;
+      // console.log(this.image);
+      // console.log(this.file);
+      // image.removeAttribute("style");
+    }
+  }
+};
+</script>
+
+<style></style>
