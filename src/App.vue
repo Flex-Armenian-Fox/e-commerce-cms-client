@@ -1,31 +1,49 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <Sidebar/>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header />
+    <Sidebar />
+    <router-view/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 import Sidebar from './components/Sidebar.vue'
+import Header from './components/Header'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-    Sidebar
+    Sidebar,
+    Header
+  },
+  computed: {
+    isLoggedIn() {return this.$store.state.isLoggedIn}
+  },
+  created() {
+    this.$store.commit("CHECK_LOGIN")
   }
 }
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+#nav {
+  padding: 30px;
+
+  a {
+    font-weight: bold;
+    color: #2c3e50;
+
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
 }
 </style>
