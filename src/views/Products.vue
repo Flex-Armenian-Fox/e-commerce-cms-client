@@ -52,50 +52,18 @@ import EditForm from "../components/EditForm.vue";
 export default {
   components: { EditForm },
   name: "Products",
-  data() {
-    return {
-      products: []
-    };
+  computed: {
+    products() {
+      return this.$store.state.products;
+    }
   },
   methods: {
-    fetchData() {
-      this.$axios({
-        method: "GET",
-        url: "/products",
-        headers: {
-          access_token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
-        }
-      })
-        .then(result => {
-          console.log(result);
-          this.products = result.data.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
     deleteProduct(id) {
-      console.log(id);
-      this.$axios({
-        method: "DELETE",
-        url: "/products/" + id,
-        headers: {
-          access_token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
-        }
-      })
-        .then(result => {
-          console.log(result);
-          this.fetchData();
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$store.dispatch("deleteProduct", id);
     }
   },
   created() {
-    this.fetchData();
+    this.$store.dispatch("fetchData");
   }
 };
 </script>

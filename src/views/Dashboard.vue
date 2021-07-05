@@ -44,7 +44,7 @@
               </v-col>
             </v-row>
             <v-text-field
-              class=""
+              class="d-none"
               label="URL"
               v-model="image_url"
             ></v-text-field>
@@ -78,45 +78,15 @@ export default {
   },
   methods: {
     submit() {
-      const formData = new FormData();
-      formData.append("file", this.file);
-
-      this.$axios
-        .post("products/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(result => {
-          console.log(result);
-          this.clear();
-        })
-        .catch(err => {
-          console.log(err);
-        });
-
-      this.$axios({
-        method: "POST",
-        url: "/products",
-        headers: {
-          access_token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
-        },
-        data: {
-          name: this.name,
-          price: this.price,
-          stock: this.stock,
-          image_url: this.image_url,
-          category: this.select
-        }
-      })
-        .then(result => {
-          console.log(result);
-          this.clear();
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$store.dispatch("addProduct", {
+        name: this.name,
+        price: this.price,
+        stock: this.stock,
+        image_url: this.image_url,
+        category: this.select,
+        file: this.file
+      });
+      this.clear();
     },
     clear() {
       // this.$v.$reset();
@@ -130,9 +100,6 @@ export default {
     loadFile(event) {
       this.image_url = URL.createObjectURL(this.image);
       this.file = event;
-      // console.log(this.image);
-      // console.log(this.file);
-      // image.removeAttribute("style");
     }
   }
 };

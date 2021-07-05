@@ -16,7 +16,7 @@
       <v-card-text>
         <v-form class="px-3">
           <v-responsive>
-            <v-img :src="image_url" :class="{ 'd-none': !image }"></v-img>
+            <v-img :src="image_url"></v-img>
           </v-responsive>
           <v-file-input
             accept="image/*"
@@ -49,8 +49,12 @@
               ></v-select>
             </v-col>
           </v-row>
-          <v-text-field class="" label="URL" v-model="image_url"></v-text-field>
-          <v-btn class="mr-4" @click="submit">
+          <v-text-field
+            class="d-none"
+            label="URL"
+            v-model="image_url"
+          ></v-text-field>
+          <v-btn class="mr-4" @click="submit(product.id)">
             submit
           </v-btn>
           <v-btn @click="clear">
@@ -87,46 +91,17 @@ export default {
       this.select = this.product.category;
       this.image_url = this.product.image_url;
     },
-    submit() {
-      const formData = new FormData();
-      formData.append("file", this.file);
-
-      this.$axios
-        .post("products/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(result => {
-          console.log(result);
-          this.clear();
-        })
-        .catch(err => {
-          console.log(err);
-        });
-
-      this.$axios({
-        method: "POST",
-        url: "/products",
-        headers: {
-          access_token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
-        },
-        data: {
-          name: this.name,
-          price: this.price,
-          stock: this.stock,
-          image_url: this.image_url,
-          category: this.select
-        }
-      })
-        .then(result => {
-          console.log(result);
-          this.clear();
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    submit(id) {
+      this.$store.dispatch("editProduct", {
+        name: this.name,
+        price: this.price,
+        stock: this.stock,
+        image_url: this.image_url,
+        category: this.select,
+        id
+      });
+      this.clear();
+      this.dialog = false;
     },
     clear() {
       // this.$v.$reset();
