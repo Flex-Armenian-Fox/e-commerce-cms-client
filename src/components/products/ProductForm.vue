@@ -2,7 +2,7 @@
   <div class="col-padding">
     <Col span="12">
       <Card>
-        <p slot="title">Add New Product</p>
+        <p slot="title">{{formAddProduct.pageTitle}}</p>
         <Form :model="formAddProduct" :label-width="100">
           <FormItem label="Product Name" >
             <Input v-model="formAddProduct.productName" placeholder="e.g Kawasaki Ninja" />
@@ -22,12 +22,17 @@
           </FormItem>
           <FormItem label="Product Category">
             <Select v-model="formAddProduct.productCategory" clearable>
-              <Option v-for="item in categories" :key="item.id" :value="item.id">{{item.category_name}}</Option>
+              <Option
+                v-for="item in categories"
+                :key="item.id"
+                :value="item.id"
+                :selected="item.category_id == formAddProduct.productCategory"
+              >{{item.category_name}}</Option>
             </Select>
           </FormItem>
           <FormItem>
-            <Button type="primary" @click="createProduct">Save</Button>
-            <Button style="margin-left:8px;" @click="$router.push('/products')">Cancel</Button>
+            <Button type="primary" @click="createProduct(formAddProduct.pageAction, formAddProduct.productId)">Save</Button>
+            <Button style="margin-left:8px;" @click="toHome">Cancel</Button>
           </FormItem>
         </Form>
       </Card>
@@ -37,20 +42,38 @@
 
 <script>
 export default {
-  name: 'AddProduct',
+  name: 'ProductForm',
+  props: ['payload'],
   data () {
     return {
-      formAddProduct: {
-        productName: '',
-        productImg: '',
-        productPrice: '',
-        productStock: '',
-        productCategory: ''
-      },
       categories: []
     }
   },
+  computed: {
+    formAddProduct () {
+      const data = this.payload ? this.payload.data : null
+      let productCategory = ''
+
+      if (data && data.Category) {
+        productCategory = data.Category.id
+      }
+
+      return {
+        productName: data ? data.name : '',
+        productImg: data ? data.image_url : '',
+        productPrice: data ? data.price : '',
+        productStock: data ? data.stock : '',
+        productCategory: productCategory,
+        pageTitle: this.payload ? this.payload.title : 'Add New Product',
+        pageAction: this.payload ? 'Edit' : 'Create',
+        productId: data ? data.id : ''
+      }
+    }
+  },
   methods: {
+    toHome () {
+      this.$router.push('/products').catch(() => {})
+    },
     fetchCategory () {
       this.$axios({
         method: 'GET',
@@ -64,10 +87,24 @@ export default {
         console.log('error fetch category', err)
       })
     },
-    createProduct () {
+    createProduct (action, id) {
+      let httpMethod = null
+      let httpUrl = null
+      let dialogMessage = ''
+
+      if (action === 'Edit') {
+        httpMethod = 'PUT'
+        httpUrl = '/products/' + id
+        dialogMessage = 'Update Success'
+      } else {
+        httpMethod = 'POST'
+        httpUrl = '/products'
+        dialogMessage = `Add product ${this.formAddProduct.productName} success`
+      }
+
       this.$axios({
-        method: 'POST',
-        url: '/products',
+        method: httpMethod,
+        url: httpUrl,
         data: {
           name: this.formAddProduct.productName,
           image_url: this.formAddProduct.productImg,
@@ -78,15 +115,12 @@ export default {
         headers: {
           access_token: localStorage.getItem('access_token')
         }
-      }).then(() => {
-        this.$Message.success(`Add product ${this.formAddProduct.productName} success`)
+      }).then(({ data: response }) => {
+        this.$Message.success(dialogMessage)
         this.$router.push('/products')
       }).catch((err) => {
         console.log('error create', err)
       })
-    },
-    checkFocus () {
-      console.log('focus')
     }
   },
   created () {
