@@ -123,5 +123,14 @@ export default new Vuex.Store({
         });
     }
   },
-  getters: {}
+  getters: {
+    filter: state => category => {
+      return state.products.filter(el => el.category == category);
+    },
+    dashboard(state) {
+      return state.products
+        .sort((a, b) => (a["createdAt"] > b["createdAt"] ? -1 : 1))
+        .slice(0, 4);
+    }
+  }
 });
