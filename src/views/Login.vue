@@ -5,15 +5,13 @@
       <form id="login-form" @submit.prevent="login">
         <div class="form-group">
           <label for="login-email">Email address</label>
-          <input type="email" class="form-control" v-model="loginEmail" aria-describedby="emailHelp" placeholder="Email">
+          <input type="email" class="form-control" v-model="email" aria-describedby="emailHelp" placeholder="Email">
         </div>
         <div class="form-group">
           <label for="login-password">Password</label>
-          <input type="password" class="form-control" v-model="loginPassword" placeholder="Password">
+          <input type="password" class="form-control" v-model="password" placeholder="Password">
         </div> <br>
-        <button type="submit" class="btn btn-primary">Login</button> <button type="button" class="btn btn-secondary" @click="registerForm">Register</button>
-        <p>or login with</p>
-        <div v-if="!reg" id="google-signin-button"></div>
+        <button type="submit" class="btn btn-primary">Login</button>
       </form>
     </div>
 </template>
@@ -22,11 +20,16 @@
 export default {
     data(){
         return {
-            loginEmail: "",
-            loginPassword: "",
+            email: "",
+            password: "",
             errMsg: "",
         }
     },
+    methods: {
+        login(){
+            this.$store.dispatch('login', {email: this.email, password: this.password})
+        }
+    }
 }
 </script>
 
