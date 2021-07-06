@@ -32,7 +32,7 @@
           </FormItem>
           <FormItem>
             <Button type="primary" @click="createProduct(formAddProduct.pageAction, formAddProduct.productId)">Save</Button>
-            <Button style="margin-left:8px;" @click="toHome">Cancel</Button>
+            <Button style="margin-left:8px;" @click="$router.push('/products')">Cancel</Button>
           </FormItem>
         </Form>
       </Card>
@@ -44,12 +44,11 @@
 export default {
   name: 'ProductForm',
   props: ['payload'],
-  data () {
-    return {
-      categories: []
-    }
-  },
   computed: {
+    categories () {
+      return this.$store.state.categories
+    },
+
     formAddProduct () {
       const data = this.payload ? this.payload.data : null
       let productCategory = ''
@@ -71,22 +70,6 @@ export default {
     }
   },
   methods: {
-    toHome () {
-      this.$router.push('/products').catch(() => {})
-    },
-    fetchCategory () {
-      this.$axios({
-        method: 'GET',
-        url: '/categories',
-        headers: {
-          access_token: localStorage.getItem('access_token')
-        }
-      }).then(({ data: response }) => {
-        this.categories = response.data
-      }).catch((err) => {
-        console.log('error fetch category', err)
-      })
-    },
     createProduct (action, id) {
       let httpMethod = null
       let httpUrl = null
@@ -102,29 +85,13 @@ export default {
         dialogMessage = `Add product ${this.formAddProduct.productName} success`
       }
 
-      this.$axios({
-        method: httpMethod,
-        url: httpUrl,
-        data: {
-          name: this.formAddProduct.productName,
-          image_url: this.formAddProduct.productImg,
-          price: this.formAddProduct.productPrice,
-          stock: this.formAddProduct.productStock,
-          category_id: this.formAddProduct.productCategory
-        },
-        headers: {
-          access_token: localStorage.getItem('access_token')
-        }
-      }).then(({ data: response }) => {
-        this.$Message.success(dialogMessage)
-        this.$router.push('/products')
-      }).catch((err) => {
-        console.log('error create', err)
+      this.$store.dispatch('createProduct', {
+        httpMethod, httpUrl, dialogMessage, formAddProduct: this.formAddProduct
       })
     }
   },
   created () {
-    this.fetchCategory()
+    this.$store.dispatch('getCategories')
   }
 }
 </script>

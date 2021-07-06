@@ -37,7 +37,10 @@
         </div>
       </Card>
     </Col>
-    <DeleteModal :data="{ show: showModal, itemId, itemName }" @deleteSuccess="fetchProduct" />
+    <DeleteModal
+      :data="{ show: showModal, itemId, itemName }"
+      @cancelDelete="showModal = false"
+    />
   </div>
 </template>
 
@@ -49,11 +52,22 @@ export default {
   components: { DeleteModal },
   data () {
     return {
-      products: [],
       buttonSize: 'default',
-      showModal: false,
       itemId: '',
       itemName: ''
+    }
+  },
+  computed: {
+    showModal: {
+      get () {
+        return this.$store.state.displayDeleteModal
+      },
+      set (v) {
+        return this.$store.commit('SET_DISPLAY_DELETE_MODAL', v)
+      }
+    },
+    products () {
+      return this.$store.state.products
     }
   },
   methods: {
@@ -70,33 +84,10 @@ export default {
         default:
           break
       }
-    },
-
-    fetchProduct () {
-      this.showModal = false
-      this.$axios({
-        method: 'GET',
-        url: '/products',
-        headers: {
-          access_token: localStorage.getItem('access_token')
-        }
-      }).then(({ data: response }) => {
-        const formattedData = [...response.data]
-        formattedData.map(el => {
-          el.price = el.price.toLocaleString()
-          if (!el.Category) {
-            el.Category = { category_name: 'N/A' }
-          }
-          return el
-        })
-        this.products = formattedData
-      }).catch((err) => {
-        console.log('error fetch', err)
-      })
     }
   },
   created () {
-    this.fetchProduct()
+    this.$store.dispatch('getProducts')
   }
 }
 </script>

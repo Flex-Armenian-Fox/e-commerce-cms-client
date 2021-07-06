@@ -47,21 +47,7 @@ export default {
   methods: {
     handleSubmit (name) {
       this.$refs[name].validate(() => {
-        this.$axios({
-          method: 'POST',
-          url: '/users/login',
-          data: {
-            email: this.formLogin.email,
-            password: this.formLogin.password
-          }
-        }).then(({ data: response }) => {
-          this.$Message.success('Login success')
-          this.$router.push('/products')
-          localStorage.setItem('access_token', response.data.access_token)
-        }).catch(({ response }) => {
-          const { error } = response.data
-          this.$Message.error(error.message)
-        })
+        this.$store.dispatch('login', { formLogin: this.formLogin })
       })
     }
   }

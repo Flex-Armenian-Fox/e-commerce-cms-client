@@ -4,6 +4,7 @@ import router from './router'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import axios from 'axios'
+import store from './store'
 
 Vue.config.productionTip = false
 Vue.use(iView)
@@ -13,5 +14,6 @@ Vue.prototype.$axios = axios.create({
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
