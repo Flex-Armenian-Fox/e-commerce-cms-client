@@ -1,11 +1,11 @@
 <template>
   <div class="products">
-    <h1 class="subtitle-1 grey--text">Products</h1>
+    <h1 class="subtitle-1 grey--text text--darken-2">Products</h1>
 
     <v-container class="my-5">
       <div class="d-flex justify-space-between">
         <div>
-          <span class="grey--text">Sort by:</span>
+          <span class="grey--text text--darken-1">Sort by:</span>
           <v-layout row class="mt-1 mb-4">
             <v-btn small text color="grey" @click="sortBy('name')">
               <v-icon left small>mdi-alphabet-latin</v-icon>
@@ -27,7 +27,7 @@
         </div>
 
         <div>
-          <span class="grey--text">Category filter:</span>
+          <span class="grey--text text--darken-1">Category filter:</span>
           <v-layout row class="mt-1 mb-4">
             <v-btn small text color="grey" @click="filter = ''">
               <span class="caption text-lowercase">none</span>
@@ -60,28 +60,54 @@
             <v-card-text>
               <div class="d-flex justify-space-between">
                 <div class="subtitle-1">{{ product.name }}</div>
-                <v-menu bottom left>
+
+                <v-menu bottom offset-y>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
                   </template>
                   <v-list>
-                    <v-list-item>
+                    <v-list-item @click="() => {}">
                       <v-list-item-title>
                         <EditForm :product="product"></EditForm>
                       </v-list-item-title>
                     </v-list-item>
-                    <v-list-item>
+                    <v-list-item @click="() => {}">
                       <v-list-item-title
-                        ><a
-                          @click.prevent="deleteProduct(product.id)"
-                          class="black--text text-decoration-none"
-                          href=""
-                          >Delete</a
-                        ></v-list-item-title
+                        @click.stop="deleteDialog = true"
+                        class="black--text text-decoration-none"
+                        >Delete</v-list-item-title
                       >
                     </v-list-item>
+                    <v-dialog v-model="deleteDialog" max-width="290">
+                      <v-card>
+                        <v-card-title class="text-h5">
+                          Are you sure you want to delete
+                          {{ product.name }} from products?
+                        </v-card-title>
+
+                        <v-card-text class="red--text text--darken-1">
+                          Delete action cannot be undone!
+                        </v-card-text>
+
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+
+                          <v-btn text @click="deleteDialog = false">
+                            No
+                          </v-btn>
+
+                          <v-btn
+                            color="green darken-1"
+                            text
+                            @click="deleteProduct(product.id)"
+                          >
+                            Yes, sure
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
                   </v-list>
                 </v-menu>
               </div>
@@ -99,12 +125,13 @@
 import EditForm from "../components/EditForm.vue";
 
 export default {
-  components: { EditForm },
   name: "Products",
+  components: { EditForm },
   data() {
     return {
       desc: false,
-      filter: ""
+      filter: "",
+      deleteDialog: false
     };
   },
   computed: {
@@ -116,6 +143,7 @@ export default {
   methods: {
     deleteProduct(id) {
       this.$store.dispatch("deleteProduct", id);
+      this.deleteDialog = false;
     },
     sortBy(prop) {
       console.log(this.products);

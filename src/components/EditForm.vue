@@ -6,7 +6,7 @@
       >
     </template>
     <v-card>
-      <v-card-title>
+      <v-card-title class="grey--text text--darken-2">
         <h3>Edit Product</h3>
         <v-spacer></v-spacer>
         <v-btn @click="dialog = false" icon>
@@ -54,10 +54,15 @@
             label="URL"
             v-model="image_url"
           ></v-text-field>
-          <v-btn class="mr-4" @click="submit(product.id)">
-            submit
+          <v-btn
+            dark
+            color="grey darken-4"
+            class="mr-4"
+            @click="submit(product.id)"
+          >
+            edit
           </v-btn>
-          <v-btn @click="clear">
+          <v-btn dark color="grey darken-4" @click="clear">
             clear
           </v-btn>
         </v-form>

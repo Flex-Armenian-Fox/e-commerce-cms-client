@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Login from "../views/Login.vue";
 import Dashboard from "../views/Dashboard.vue";
 import Products from "../views/Products.vue";
 import Accounts from "../views/Accounts.vue";
@@ -9,19 +10,31 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/login",
+    name: "login",
+    component: Login,
+    beforeEnter: (to, from, next) => {
+      if (localStorage.access_token) next("/");
+      else next();
+    }
+  },
+  {
     path: "/",
     name: "dashboard",
-    component: Dashboard
+    component: Dashboard,
+    meta: { requiresAuth: true }
   },
   {
     path: "/products",
     name: "products",
-    component: Products
+    component: Products,
+    meta: { requiresAuth: true }
   },
   {
     path: "/accounts",
     name: "accounts",
-    component: Accounts
+    component: Accounts,
+    meta: { requiresAuth: true }
   }
   // {
   //   path: "/about",
@@ -38,6 +51,22 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!localStorage.getItem("access_token")) {
+      next({
+        path: "/login"
+      });
+    } else {
+      next();
+    }
+  } else {
+    next(); // make sure to always call next()!
+  }
 });
 
 export default router;

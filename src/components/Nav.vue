@@ -2,21 +2,27 @@
   <nav>
     <v-app-bar flat app class="grey lighten-4">
       <v-app-bar-nav-icon
-        class="grey--text"
+        v-if="isSignIn"
+        class="grey--text text--darken-1"
         @click="drawer = !drawer"
       ></v-app-bar-nav-icon>
-      <v-toolbar-title class="text-uppercase grey--text">
+      <v-toolbar-title class="text-uppercase grey--text text--darken-1">
         <span class="font-weight-bold">Dast</span>
         <span class="font-weight-light">ConceptStore</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text color="grey">
+      <v-btn v-if="isSignIn" text color="grey darken-1" @click="signOut">
         <span>Sign Out</span>
         <v-icon right>mdi-exit-to-app</v-icon>
       </v-btn>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app class="grey darken-4">
+    <v-navigation-drawer
+      v-if="isSignIn"
+      v-model="drawer"
+      app
+      class="grey darken-4"
+    >
       <v-list>
         <div>
           <v-list-item
@@ -64,6 +70,19 @@ export default {
         { icon: "mdi-account-multiple", text: "Accounts", route: "/accounts" }
       ]
     };
+  },
+  computed: {
+    isSignIn() {
+      return this.$store.state.isSignIn;
+    }
+  },
+  methods: {
+    signOut() {
+      localStorage.clear();
+      this.$store.commit("SET_IS_SIGNIN", false);
+      this.$store.commit("SET_IS_ADMIN", false);
+      this.$router.push("/login");
+    }
   }
 };
 </script>

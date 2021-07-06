@@ -17,6 +17,13 @@ export default {
   name: "App",
   data() {
     return {};
+  },
+  created() {
+    if (localStorage.access_token) {
+      this.$store.commit("SET_IS_SIGNIN", true);
+    } else {
+      this.$store.commit("SET_IS_SIGNIN", false);
+    }
   }
 };
 </script>

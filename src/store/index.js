@@ -11,14 +11,52 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    products: []
+    products: [],
+    isSignIn: false,
+    isAdmin: false,
+    signInFail: false
   },
   mutations: {
     SET_PRODUCTS(state, payload) {
       state.products = payload;
+      state.products.sort((a, b) => (a["createdAt"] > b["createdAt"] ? -1 : 1));
+    },
+    SET_IS_SIGNIN(state, payload) {
+      state.isSignIn = payload;
+    },
+    SET_IS_ADMIN(state, payload) {
+      state.isAdmin = payload;
+    },
+    SIGNIN_FAIL(state, payload) {
+      state.signInFail = payload;
     }
   },
   actions: {
+    signIn(context, payload) {
+      axios({
+        method: "POST",
+        url: "/login",
+        data: {
+          email: payload.email,
+          password: payload.password
+        }
+      })
+        .then(result => {
+          console.log(result);
+          if (result.data.role == "admin") {
+            context.commit("SET_IS_SIGNIN", true);
+            context.commit("SET_IS_ADMIN", true);
+            context.commit("SIGNIN_FAIL", false);
+            localStorage.setItem("access_token", result.data.access_token);
+            router.push("/");
+          } else {
+            context.commit("SIGNIN_FAIL", true);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     fetchData(context) {
       axios({
         method: "GET",
@@ -87,6 +125,7 @@ export default new Vuex.Store({
           })
             .then(result => {
               console.log(result);
+              context.dispatch("fetchData");
             })
             .catch(err => {
               console.log(err);
