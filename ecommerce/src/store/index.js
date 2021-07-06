@@ -1,27 +1,90 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '../router'
-import Axios from 'axios'
-
-const axios = Axios.create({
-    baseURL: 'http://localhost:3000'
-})
+import axios from 'axios'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        isLoggedIn: false
+        isLoggedIn: false,
+        products: []
     },
     mutations: {
         USER_LOGIN (state, payload) {
             state.isLoggedIn = payload
+        },
+        USER_LOGOUT (state, payload) {
+            state.isLoggedIn = payload
+        },
+        SET_PRODUCTS (state, payload) {
+            state.products = payload
         }
     },
     actions: {
-
+        userLogin ({ commit }, payload) {
+            axios({
+                method: 'POST',
+                url: 'http://localhost:3000/users/login',
+                data: payload
+            })
+            .then(response => {
+                localStorage.setItem('accesstoken', response.data.accesstoken)
+                commit('USER_LOGIN', true)
+                router.push({ name: 'ProductsPage' }).catch(() => {})
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        userLogout ({ commit }) {
+            localStorage.clear()
+            commit('USER_LOGOUT', false)
+            router.push({ name: 'UsersPage' }).catch(() => {})
+        },
+        fetchProducts ({ commit }) {
+            axios({
+                method: 'GET',
+                url: 'http://localhost:3000/products/',
+                headers: {accesstoken: localStorage.getItem('accesstoken')}
+            })
+            .then(({ data }) => {
+                commit('SET_PRODUCTS', data.products)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        createProduct (_, payload) {
+            axios({
+                method: 'POST',
+                url: 'http://localhost:3000/products/',
+                data: payload,
+                headers: {accesstoken: localStorage.getItem('accesstoken')}
+            })
+            .then(() => {
+                router.push({ name: 'ProductsPage' }).catch(() => {})
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        deleteProduct ({ dispatch }, productId) {
+            axios({
+                method: 'DELETE',
+                url: 'http://localhost:3000/products/' + productId,
+                headers: {accesstoken: localStorage.getItem('accesstoken')}
+            })
+            .then(response => {
+                console.log(response, ' <<< DELETE PRODUCT Response')
+                dispatch('fetchProducts')
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        }
     },
     getters: {
-        
+
     }
 })

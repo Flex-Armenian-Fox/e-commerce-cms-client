@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import UsersPage from '../views/UsersPage.vue'
 import LoginForm from '../components/LoginForm.vue'
 import ProductsPage from '../views/ProductsPage.vue'
+import CreateProduct from '../components/CreateProduct.vue'
 
 Vue.use(VueRouter)
 
@@ -11,6 +12,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
+    redirect: {name: 'UsersPage'},
     component: Home
   },
   {
@@ -31,13 +33,13 @@ const routes = [
     name: 'ProductsPage',
     component: ProductsPage,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/addproduct',
+    name: 'CreateProduct',
+    component: CreateProduct,
+    meta: { requiresAuth: true }
   }
-  // {
-  //   path: '/about',
-  //   name: 'About',
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  // }
 ]
 
 const router = new VueRouter({

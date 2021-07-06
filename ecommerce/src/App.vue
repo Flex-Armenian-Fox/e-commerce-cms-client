@@ -2,12 +2,7 @@
   <div id="app">
     <div class="home">
       <nav>
-        <router-link to="/">Home</router-link><br>
         <router-link v-if="!isLoggedIn" to="/users">Users</router-link>
-        <!-- <div v-else>
-          <router-link to="/products">Products</router-link><br>
-          <router-link @click.prevent="logoutUser" to="/">Logout</router-link><br>
-        </div> -->
       </nav>
       <router-view></router-view>
     </div>
@@ -21,12 +16,12 @@ export default {
       
     }
   },
+  computed: {
+    isLoggedIn () {
+      return this.$store.state.isLoggedIn
+    }
+  },
   methods: {
-    // logoutUser () {
-    //   localStorage.removeItem('accesstoken')
-    //   this.checkAuth()
-    //   this.$router.push('/').catch(() => {})
-    // },
     checkAuth () {
       if (!localStorage.getItem('accesstoken')) {
         this.$store.commit('USER_LOGIN', false)
@@ -37,11 +32,6 @@ export default {
   },
   created () {
     this.checkAuth()
-  },
-  computed: {
-    isLoggedIn () {
-      return this.$store.state.isLoggedIn
-    }
   }
 }
 </script>

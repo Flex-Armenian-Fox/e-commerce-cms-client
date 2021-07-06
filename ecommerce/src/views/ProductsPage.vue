@@ -8,6 +8,7 @@
 
     <h2>Products Page</h2><br>
     <h4>List of Products</h4><br>
+    <button @click="toAddProduct">+ Add Product</button>
     <ProductTable :productsList="products"></ProductTable>
   </div>
 </template>
@@ -20,39 +21,27 @@ export default {
     components: { 
       ProductTable
     },
-    data () {
-      return {
-        products: []
+    computed: {
+      checkAuth () {
+        return this.$store.getters.checkAuthX
+      },
+      products () {
+        return this.$store.state.products
       }
     },
     methods: {
       fetchProducts () {
-        this.$axios({
-          method: 'GET',
-          url: 'http://localhost:3000/products/',
-          headers: {accesstoken: localStorage.getItem('accesstoken')}
-        })
-        .then(({ data }) => {
-          this.products = data
-        })
-        .catch(err => {
-          console.log(err)
-        })
+        this.$store.dispatch('fetchProducts')
       },
       logoutUser () {
-        console.log('MASUK LOGOUT-USER !!!')
-        localStorage.clear()
-        this.$store.commit('USER_LOGIN', false)
-        this.$router.push('/users').catch(() => {})
+        this.$store.dispatch('userLogout')
+      },
+      toAddProduct () {
+        this.$router.push({ name: 'CreateProduct' })
       }
     },
     created () {
       this.fetchProducts()
-    },
-    computed: {
-      checkAuth () {
-        return this.$store.getters.checkAuthX
-      }
     }
 }
 </script>

@@ -26,24 +26,8 @@ export default {
     },
     methods: {
         userLogin() {
-            this.$axios({
-                method: 'POST',
-                url: 'http://localhost:3000/users/login',
-                data: {
-                    email: this.email,
-                    password: this.password
-                }
-            })
-            .then(response => {
-                console.log('INI RESPONSE userLogin ==> ', response)
-                localStorage.setItem('accesstoken', response.data.accesstoken)
-                this.$store.commit('USER_LOGIN', true)
-                this.$router.push({ name: 'ProductsPage' }).catch(() => {})
-            })
-            .catch(err => {
-                console.log('INI ERROR userLogin ==> ', err)
-                console.log(err)
-            })
+            const input = {email: this.email, password: this.password}
+            this.$store.dispatch('userLogin', input)
         }
     }
 }

@@ -22,7 +22,7 @@
                     <button>Edit</button>
                 </td>
                 <td>
-                    <button>Delete</button>
+                    <button @click.prevent="deleteProduct(product.id)">Delete</button>
                 </td>
               </tr>
           </tbody>
@@ -34,8 +34,10 @@
 export default {
     name: 'ProductTable',
     props: ['productsList'],
-    created () {
-        console.log('ini productsList PROPS ==> ', this.productsList)
+    methods: {
+        deleteProduct (productId) {
+            this.$store.dispatch('deleteProduct', productId)
+        }
     }
 }
 </script>
