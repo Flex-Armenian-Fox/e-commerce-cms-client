@@ -5,6 +5,7 @@ import UsersPage from '../views/UsersPage.vue'
 import LoginForm from '../components/LoginForm.vue'
 import ProductsPage from '../views/ProductsPage.vue'
 import CreateProduct from '../components/CreateProduct.vue'
+import EditProduct from '../components/EditProduct.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,12 @@ const routes = [
     name: 'CreateProduct',
     component: CreateProduct,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/editproduct',
+    name: 'EditProduct',
+    component: EditProduct,
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -54,10 +61,7 @@ export default router
 
 router.beforeEach((to, from, next) => {
 
-  console.log('TO ==> ', to.name)
-  console.log('FROM ==> ', from.name)
-
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+if (to.matched.some(record => record.meta.requiresAuth)) {
 
     if (!localStorage.getItem('accesstoken')) next({ path: '/users' })
     else next()

@@ -19,7 +19,7 @@
                 <td>{{ product.price }}</td>
                 <td>{{ product.stock }}</td>
                 <td>
-                    <button>Edit</button>
+                    <button @click.prevent="editProduct(product.id)" >Edit</button>
                 </td>
                 <td>
                     <button @click.prevent="deleteProduct(product.id)">Delete</button>
@@ -35,6 +35,9 @@ export default {
     name: 'ProductTable',
     props: ['productsList'],
     methods: {
+        editProduct (productId) {
+            this.$store.dispatch('fetchOneProduct', productId)
+        },
         deleteProduct (productId) {
             this.$store.dispatch('deleteProduct', productId)
         }

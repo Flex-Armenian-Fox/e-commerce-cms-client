@@ -8,7 +8,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         isLoggedIn: false,
-        products: []
+        products: [],
+        currentProduct: {}
     },
     mutations: {
         USER_LOGIN (state, payload) {
@@ -19,6 +20,12 @@ export default new Vuex.Store({
         },
         SET_PRODUCTS (state, payload) {
             state.products = payload
+        },
+        SET_CURRENT_PRODUCT (state, payload) {
+            state.currentProduct = payload
+        },
+        SET_NAME (state, payload) {
+            state.currentProduct.name = payload
         }
     },
     actions: {
@@ -75,9 +82,34 @@ export default new Vuex.Store({
                 url: 'http://localhost:3000/products/' + productId,
                 headers: {accesstoken: localStorage.getItem('accesstoken')}
             })
-            .then(response => {
-                console.log(response, ' <<< DELETE PRODUCT Response')
+            .then(() => {
                 dispatch('fetchProducts')
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        fetchOneProduct ({ commit }, productId) {
+            axios({
+                method: 'GET',
+                url: 'http://localhost:3000/products/' + productId,
+                headers: {accesstoken: localStorage.getItem('accesstoken')}
+            })
+            .then(response => {
+                commit('SET_CURRENT_PRODUCT', response.data)
+                router.push({ name: 'EditProduct' }).catch(() => {})
+            })
+        },
+        editProduct (_, payload) {
+            const {productId, name, image_url, price, stock} = payload
+            axios({
+                method: 'PUT',
+                url: 'http://localhost:3000/products/' + productId,
+                data: {name, image_url, price, stock},
+                headers: {accesstoken: localStorage.getItem('accesstoken')}
+            })
+            .then(response => {
+                router.push({ name: 'ProductsPage' })
             })
             .catch(err => {
                 console.log(err)
