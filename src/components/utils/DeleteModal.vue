@@ -4,7 +4,7 @@
       v-model="data.show"
       title="Are You Sure Want To Delete This?"
       @on-cancel="$emit('cancelDelete')"
-      @on-ok="deleteData(data.itemId)"
+      @on-ok="deleteData(data.endpoints, data.itemId)"
       cancel-text="Cancel"
       ok-text="Yes Delete"
     >
@@ -18,8 +18,8 @@ export default {
   name: 'DeleteModal',
   props: ['data'],
   methods: {
-    deleteData (id) {
-      this.$store.dispatch('deleteProduct', { id })
+    deleteData (endpoints, id) {
+      this.$store.dispatch(endpoints, { id })
     }
   }
 }

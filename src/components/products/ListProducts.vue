@@ -38,7 +38,7 @@
       </Card>
     </Col>
     <DeleteModal
-      :data="{ show: showModal, itemId, itemName }"
+      :data="{ show: showModal, itemId, itemName, endpoints: 'deleteProduct' }"
       @cancelDelete="showModal = false"
     />
   </div>

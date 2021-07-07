@@ -1,5 +1,5 @@
 <template>
-  <Menu :theme="navbarTheme" active-name="1-2" :open-names="['1']">
+  <Menu :theme="navbarTheme" :open-names="['1','2','3']">
     <MenuGroup title="Administrator Menu"></MenuGroup>
     <Submenu name="1">
       <template slot="title">
@@ -10,13 +10,15 @@
           <p class="custom-text-align">Manage Products</p>
         </div>
       </template>
-      <MenuItem name="1-1">
+      <MenuItem name="1-1" style="padding-left:2em">
         <Icon type="md-add"/>
-        <router-link to="/addproduct">Add Product</router-link>
+        <a class="link" href="#" @click.prevent="navigateMenu('addproduct')">
+          Add Product
+        </a>
       </MenuItem>
-      <MenuItem name="1-2">
-       <Icon type="ios-list-box-outline"/>
-       <router-link to="/products">List Product</router-link>
+      <MenuItem name="1-2" style="padding-left:2em">
+        <Icon type="ios-list-box-outline"/>
+        <a class="link" href="#" @click.prevent="navigateMenu('products')">List Product</a>
       </MenuItem>
     </Submenu>
     <Submenu name="2">
@@ -29,10 +31,12 @@
         </div>
       </template>
       <MenuItem name="2-1">
-        <Icon type="md-add"/>Add Categories
+        <Icon type="md-add"/>
+        <a class="link" href="#" @click.prevent="navigateMenu('addcategory')">Add Categories</a>
       </MenuItem>
       <MenuItem name="2-2">
-       <Icon type="ios-list-box-outline"/>List Categories
+       <Icon type="ios-list-box-outline"/>
+       <a class="link" href="#" @click.prevent="navigateMenu('category')">List Categories</a>
       </MenuItem>
     </Submenu>
     <Submenu name="3">
@@ -44,8 +48,9 @@
           <p class="custom-text-align">Manage User</p>
         </div>
       </template>
-      <MenuItem name="3-1">
-       <Icon type="md-exit"/> <a href="#" @click.prevent="signOut">Signout</a>
+      <MenuItem name="3-1" style="padding-left:0.5em">
+       <Icon type="md-exit"/>
+       <a class="link" href="#" @click.prevent="signOut">Signout</a>
       </MenuItem>
     </Submenu>
   </Menu>
@@ -57,7 +62,9 @@ export default {
   data () {
     return {
       navbarTheme: 'light',
-      isCollapsed: false
+      isCollapsed: false,
+      activeName: '',
+      activeSubMenu: []
     }
   },
   methods: {
@@ -65,6 +72,24 @@ export default {
       this.$Message.success('Admin Logged Out')
       localStorage.clear()
       this.$router.push({ name: 'Login' })
+    },
+    navigateMenu (location) {
+      switch (location) {
+        case 'products':
+          this.$router.push(`/${location}`).catch(() => {})
+          break
+        case 'category':
+          this.$router.push(`/${location}`).catch(() => {})
+          break
+        case 'addproduct':
+          this.$router.push(`/${location}`).catch(() => {})
+          break
+        case 'addcategory':
+          this.$router.push(`/${location}`).catch(() => {})
+          break
+        default:
+          break
+      }
     }
   }
 }
@@ -77,5 +102,10 @@ export default {
   .custom-text-align {
     text-align: left;
     margin-left: 3vw;
+  }
+  .link {
+    text-decoration: none;
+    background-color: none;
+    color: royalblue;
   }
 </style>

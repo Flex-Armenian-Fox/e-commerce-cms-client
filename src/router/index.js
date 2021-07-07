@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '@/views/login/Login.vue'
+import CategoryView from '@/views/categories/CategoryView.vue'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,31 @@ const routes = [
         name: 'EditProduct',
         meta: { requireAuth: true },
         component: () => import('@/components/products/EditProduct.vue')
+      }
+    ]
+  },
+  {
+    path: '/category',
+    name: 'CategoryView',
+    component: CategoryView,
+    meta: { requireAuth: true },
+    redirect: '/categories',
+    children: [
+      {
+        path: '/categories',
+        name: 'ListCategoryComponent',
+        component: () => import('@/components/categories/ListCategory.vue'),
+        meta: { requireAuth: true }
+      },
+      {
+        path: '/editcategory/:id',
+        name: 'CategoryForm',
+        component: () => import('@/components/categories/CategoryForm.vue')
+      },
+      {
+        path: '/addcategory',
+        name: 'AddCategoryForm',
+        component: () => import('@/components/categories/CategoryForm.vue')
       }
     ]
   }

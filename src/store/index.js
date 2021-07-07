@@ -5,7 +5,7 @@ import iView from 'iview'
 import router from '../router'
 
 const axios = Axios.create({
-  baseURL: 'http://localhost:3000/api'
+  baseURL: 'https://antonp-ecommerce-server.herokuapp.com/api'
 })
 
 Vue.use(Vuex)
@@ -14,7 +14,11 @@ export default new Vuex.Store({
   state: {
     products: [],
     categories: [],
-    displayDeleteModal: false
+    displayDeleteModal: false,
+    formCategories: {
+      category_name: '',
+      category_desc: ''
+    }
   },
   mutations: {
     SET_DISPLAY_DELETE_MODAL (state, payload) {
@@ -27,6 +31,16 @@ export default new Vuex.Store({
 
     SET_CATEGORIES (state, payload) {
       state.categories = payload
+    },
+
+    SET_FORM_CATEGORY (state, payload) {
+      if (payload.is_add) {
+        state.formCategories.category_name = ''
+        state.formCategories.category_desc = ''
+      } else {
+        state.formCategories.category_name = payload.category_name
+        state.formCategories.category_desc = payload.category_description
+      }
     }
   },
   actions: {
@@ -45,6 +59,75 @@ export default new Vuex.Store({
       }).catch(({ response }) => {
         const { error } = response.data
         iView.Message.error(error.message)
+      })
+    },
+
+    getCategoryById (context, payload) {
+      axios({
+        method: 'GET',
+        url: '/categories/' + payload.id,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      }).then(({ data: response }) => {
+        context.commit('SET_FORM_CATEGORY', response.data)
+      }).catch((err) => {
+        console.log('error', err)
+      })
+    },
+
+    createCategory (context, payload) {
+      axios({
+        method: 'POST',
+        url: '/categories',
+        data: {
+          category_name: payload.categoryName,
+          category_description: payload.categoryDesc
+        },
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      }).then(() => {
+        iView.Message.success('Success Add New Category')
+        context.commit('SET_DISPLAY_DELETE_MODAL', false)
+        context.commit('SET_FORM_CATEGORY', { is_add: true })
+        router.push('/category')
+      }).catch((err) => {
+        console.log('error createCategory', err)
+      })
+    },
+
+    deleteCategory (context, payload) {
+      axios({
+        method: 'DELETE',
+        url: `/categories/${payload.id}`,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      }).then(() => {
+        iView.Message.success('Delete Success')
+        this.dispatch('getCategories')
+      }).catch((err) => {
+        console.log('Error delete category', err)
+      })
+    },
+
+    editCategory (context, payload) {
+      axios({
+        method: 'PUT',
+        url: '/categories/' + payload.id,
+        data: {
+          category_name: payload.categoryName,
+          category_description: payload.categoryDesc
+        },
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      }).then(() => {
+        iView.Message.success('Update Success')
+        router.push('/category')
+      }).catch((err) => {
+        console.log('error', err)
       })
     },
 

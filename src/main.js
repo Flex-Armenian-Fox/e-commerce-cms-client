@@ -9,7 +9,7 @@ import store from './store'
 Vue.config.productionTip = false
 Vue.use(iView)
 Vue.prototype.$axios = axios.create({
-  baseURL: 'http://localhost:3000/api'
+  baseURL: 'https://antonp-ecommerce-server.herokuapp.com/api'
 })
 
 new Vue({
