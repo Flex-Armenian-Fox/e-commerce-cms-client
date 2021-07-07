@@ -9,7 +9,9 @@ export default new Vuex.Store({
     state: {
         isLoggedIn: false,
         products: [],
-        currentProduct: {}
+        currentProduct: {},
+        productForm: false,
+        editForm: false
     },
     mutations: {
         USER_LOGIN (state, payload) {
@@ -24,8 +26,11 @@ export default new Vuex.Store({
         SET_CURRENT_PRODUCT (state, payload) {
             state.currentProduct = payload
         },
-        SET_NAME (state, payload) {
-            state.currentProduct.name = payload
+        SET_PRODUCT_FORM (state, payload) {
+            state.productForm = payload
+        },
+        SET_EDIT_FORM (state, payload) {
+            state.editForm = payload
         }
     },
     actions: {
@@ -62,7 +67,7 @@ export default new Vuex.Store({
                 console.log(err)
             })
         },
-        createProduct (_, payload) {
+        createProduct ({ commit, dispatch }, payload) {
             axios({
                 method: 'POST',
                 url: 'http://localhost:3000/products/',
@@ -70,7 +75,9 @@ export default new Vuex.Store({
                 headers: {accesstoken: localStorage.getItem('accesstoken')}
             })
             .then(() => {
-                router.push({ name: 'ProductsPage' }).catch(() => {})
+                commit('SET_PRODUCT_FORM', false)
+                dispatch('fetchProducts')
+                // router.push({ name: 'ProductsPage' }).catch(() => {})
             })
             .catch(err => {
                 console.log(err)
@@ -97,10 +104,11 @@ export default new Vuex.Store({
             })
             .then(response => {
                 commit('SET_CURRENT_PRODUCT', response.data)
-                router.push({ name: 'EditProduct' }).catch(() => {})
+                commit('SET_EDIT_FORM', true)
+                // router.push({ name: 'EditProduct' }).catch(() => {})
             })
         },
-        editProduct (_, payload) {
+        editProduct ({ commit, dispatch }, payload) {
             const {productId, name, image_url, price, stock} = payload
             axios({
                 method: 'PUT',
@@ -109,11 +117,24 @@ export default new Vuex.Store({
                 headers: {accesstoken: localStorage.getItem('accesstoken')}
             })
             .then(response => {
-                router.push({ name: 'ProductsPage' })
+                commit('SET_EDIT_FORM', false)
+                dispatch('fetchProducts')
             })
             .catch(err => {
                 console.log(err)
             })
+        },
+        showAddProductForm ({ commit }) {
+            commit('SET_PRODUCT_FORM', true)
+        },
+        hideAddProductForm ({ commit }) {
+            commit('SET_PRODUCT_FORM', false)
+        },
+        // showEditForm ({ commit }) {
+        //     commit('SET_EDIT_FORM', true)
+        // },
+        hideEditForm ({ commit }) {
+            commit('SET_EDIT_FORM', false)
         }
     },
     getters: {

@@ -4,8 +4,6 @@ import Home from '../views/Home.vue'
 import UsersPage from '../views/UsersPage.vue'
 import LoginForm from '../components/LoginForm.vue'
 import ProductsPage from '../views/ProductsPage.vue'
-import CreateProduct from '../components/CreateProduct.vue'
-import EditProduct from '../components/EditProduct.vue'
 
 Vue.use(VueRouter)
 
@@ -33,18 +31,6 @@ const routes = [
     path: '/products',
     name: 'ProductsPage',
     component: ProductsPage,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/addproduct',
-    name: 'CreateProduct',
-    component: CreateProduct,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/editproduct',
-    name: 'EditProduct',
-    component: EditProduct,
     meta: { requiresAuth: true }
   }
 ]
