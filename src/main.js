@@ -9,6 +9,12 @@ import '@/assets/css/main.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import store from './store'
+
+import VueSweetalert2 from 'vue-sweetalert2'
+import 'sweetalert2/dist/sweetalert2.min.css'
+
+Vue.use(VueSweetalert2)
+
 // import Axios from 'axios'
 
 // Make BootstrapVue available throughout your project

@@ -3,7 +3,7 @@
 }
 
 body {
-  background: #7a7a7a !important;
+  background: rgb(224, 224, 224) !important;
   min-height: 100vh;
   display: flex;
   font-weight: 400;

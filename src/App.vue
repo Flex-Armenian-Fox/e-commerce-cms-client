@@ -1,10 +1,6 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
-    <b-navbar toggleable="lg" type="dark" variant="info" fixed="top">
+    <b-navbar toggleable="lg" type="dark" variant="info">
       <b-navbar-brand href="#">e-Carrello</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -22,13 +18,12 @@
             <template #button-content>
               Account
             </template>
-            <b-dropdown-item @click.prevent="openLoginPage">Login</b-dropdown-item>
-            <b-dropdown-item @click.prevent="logout">Logout</b-dropdown-item>
+            <b-dropdown-item v-if="!isLogin" @click.prevent="openLoginPage">Login</b-dropdown-item>
+            <b-dropdown-item v-if="isLogin" @click.prevent="logout">Logout</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-
     <router-view/>
   </div>
 </template>
@@ -37,12 +32,19 @@
 export default {
   name: 'App',
   component: {},
+  computed: {
+    isLogin () {
+      return this.$store.state.isLogin
+    }
+  },
   methods: {
     openLoginPage () {
       this.$router.push({ name: 'Login' })
     },
     logout () {
       localStorage.clear()
+      this.$store.commit('SET_ISLOGIN', false)
+      this.$router.push('/')
     }
   }
 }
