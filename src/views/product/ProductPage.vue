@@ -35,9 +35,9 @@
 <script>
 import swal from 'sweetalert2'
 export default {
-  name: "App",
+  name: 'App',
   components: {},
-  data() {
+  data () {
     return {
       fields: [
         {
@@ -70,7 +70,7 @@ export default {
         }
       ],
       selectedRow: {}
-    };
+    }
   },
   computed: {
     items () {
@@ -85,13 +85,13 @@ export default {
       console.log('DATA', data)
       if (this.selectedRow[data.index] === true) {
         console.log(data.item.id, 'UpdateEdit')
-        this.$store.dispatch('updateProduct', { 
-            id: data.item.id, 
-            name: data.item.name,
-            image_url: data.item.image_url,
-            price: data.item.price,
-            stock: data.item.stock,
-            updatedAt: new Date()
+        this.$store.dispatch('updateProduct', {
+          id: data.item.id,
+          name: data.item.name,
+          image_url: data.item.image_url,
+          price: data.item.price,
+          stock: data.item.stock,
+          updatedAt: new Date()
         })
       } else {
         console.log(data.index, 'EditMode')
@@ -108,18 +108,17 @@ export default {
       swal.fire({
         title: 'Are You Sure To Delete This Data?',
         showDenyButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: 'Yes',
+        denyButtonText: 'No'
       }).then((result) => {
         if (result.isConfirmed) {
           this.$store.dispatch('deleteProduct', { id: data.item.id })
         }
       })
-
     }
   },
-  created() {
+  created () {
     this.$store.dispatch('getProducts')
   }
-};
+}
 </script>

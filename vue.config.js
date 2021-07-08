@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  lintOnSave: false,
+  // lintOnSave: false, // Untuk matikan ESLint
   chainWebpack: config => {
     config.resolve.alias.set(
       'vue$',

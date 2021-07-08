@@ -17,9 +17,9 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
   components: {},
-  data() {
+  data () {
     return {
       fields: [
         {
@@ -43,14 +43,14 @@ export default {
         }
       ],
       items: [
-          {
-              name: "Budi Gunawan",
-              phone: "628128128121",
-              address: "Jl. Mana Saja Senang"
-          }
+        {
+          name: 'Budi Gunawan',
+          phone: '628128128121',
+          address: 'Jl. Mana Saja Senang'
+        }
       ],
       selectedRow: {}
-    };
-  },
-};
+    }
+  }
+}
 </script>

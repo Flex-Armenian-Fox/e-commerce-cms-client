@@ -16,9 +16,9 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
   components: {},
-  data() {
+  data () {
     return {
       fields: [
         {
@@ -47,15 +47,15 @@ export default {
         }
       ],
       items: [
-          {
-              order_id: "O1/2107080001",
-              order_date: "08-07/2021",
-              customer: "Budi Gunawan",
-              item: 1
-          }
+        {
+          order_id: 'O1/2107080001',
+          order_date: '08-07/2021',
+          customer: 'Budi Gunawan',
+          item: 1
+        }
       ],
       selectedRow: {}
-    };
-  },
-};
+    }
+  }
+}
 </script>

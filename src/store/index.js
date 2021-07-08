@@ -6,7 +6,7 @@ import Swal from 'sweetalert2'
 
 Vue.use(Vuex)
 
-axios.defaults.baseURL = 'http://localhost:3000'
+axios.defaults.baseURL = 'https://e-carrello.herokuapp.com'
 
 export default new Vuex.Store({
   state: {

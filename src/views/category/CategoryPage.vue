@@ -24,9 +24,9 @@
 <script>
 import swal from 'sweetalert2'
 export default {
-  name: "App",
+  name: 'App',
   components: {},
-  data() {
+  data () {
     return {
       fields: [
         {
@@ -45,7 +45,7 @@ export default {
         }
       ],
       selectedRow: {}
-    };
+    }
   },
   computed: {
     items () {
@@ -76,18 +76,17 @@ export default {
       swal.fire({
         title: 'Are You Sure To Delete This Data?',
         showDenyButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: 'Yes',
+        denyButtonText: 'No'
       }).then((result) => {
         if (result.isConfirmed) {
           this.$store.dispatch('deleteCategory', { id: data.item.id })
         }
       })
-
     }
   },
-  created() {
+  created () {
     this.$store.dispatch('getCategories')
   }
-};
+}
 </script>
