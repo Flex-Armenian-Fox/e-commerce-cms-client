@@ -20,6 +20,7 @@ export default new Vuex.Store({
   mutations: {
     CHECK_LOGIN(state){
       if(localStorage.access_token) state.isLoggedIn=true
+      else state.isLoggedIn=false
     },
     SET_PRODUCTS(state, payload){
       state.products = payload
@@ -69,6 +70,7 @@ export default new Vuex.Store({
       })
     },
     delProduct(context, payload){
+      console.log('deleting item')
       axios.delete('/products/'+payload,{headers: {access_token: localStorage.access_token}})
       .then(res => {
         console.log(res)
@@ -100,10 +102,45 @@ export default new Vuex.Store({
         context.dispatch('fetchData')
       })
     },
+    postTag(context, payload){
+      axios.post('/tags', {name: payload.name}, {headers: {access_token: localStorage.access_token}})
+        .then(res => {
+          console.log(res)
+          context.dispatch('fetchData')
+        })
+        .catch(err => {console.log(err)})
+    },
+    delTag(context, payload){
+      console.log(payload)
+      axios.delete(`/tags/${payload}`, {headers: {access_token: localStorage.access_token}})
+        .then(res => {
+          console.log(res)
+          context.dispatch('fetchData')
+        })
+        .catch(err => {console.log(err)})
+    },
+    delTagLi(context, payload){
+      console.log(payload.TagList.id)
+      axios.delete(`/productTag/${payload.TagList.id}`, {headers: {access_token: localStorage.access_token}})
+        .then(res => {
+          console.log(res)
+          context.dispatch('fetchData')
+        })
+        .catch(err => {console.log(err)})
+      },
+      addTagLi(context, payload){
+      axios.post(`/productTag/`, payload, {headers: {access_token: localStorage.access_token}})
+        .then(res => {
+          console.log(res)
+          context.dispatch('fetchData')
+        })
+        .catch(err => {console.log(err)})
+    }
   },
   getters: {
     tagFilter: (state) => (tag) => {
-      return state.products.some(product => product.Tags.)
+      console.log(tag)
+      return state.products.filter(product => product.Tags.some(el => el.name == tag))
     }
   },
   modules: {

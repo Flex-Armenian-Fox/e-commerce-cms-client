@@ -14,7 +14,17 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/Login.vue')
+    component: () => import('../views/Login.vue'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.access_token) next('/')
+      else next()
+    }
+  },
+  {
+    path: '/tag/:name',
+    name: 'Tag',
+    component: Home,
+    meta:{requiresAuth: true}
   }
 ]
 

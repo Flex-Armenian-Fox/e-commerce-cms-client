@@ -2,10 +2,10 @@
   <header>
     <div class="navbar navbar-dark bg-dark box-shadow">
             <div class="container d-flex justify-content-between">
-            <a href="#" class="navbar-brand d-flex align-items-center">
+            <router-link to="/" class="navbar-brand d-flex align-items-center">
                 <strong>Commerce</strong>
-            </a>
-            <div class="ml-auto d-flex justify-content-around" id="top-btns" v-if="isLoggedIn">
+            </router-link>
+            <div class="ml-auto d-flex " id="top-btns" v-if="isLoggedIn">
                 <button class="btn btn-danger" @click="logout">Logout</button>
                 <Sidebar />
             </div>
@@ -25,7 +25,8 @@ export default {
     methods: {
         logout(){
             localStorage.clear()
-            router.push('/')
+            this.$store.commit('CHECK_LOGIN')
+            router.push('/login')
         }
     }
 }
