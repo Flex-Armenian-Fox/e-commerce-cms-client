@@ -9,15 +9,29 @@
         </v-card-title>
         <v-card-text>
           <v-form>
-            <v-responsive>
-              <v-img :src="image_url" :class="{ 'd-none': !image }"></v-img>
-            </v-responsive>
+            <v-carousel height="100%" :class="{ 'd-none': !image }">
+              <v-carousel-item
+                v-for="(url, i) in image_url"
+                :key="i"
+                :src="url"
+              ></v-carousel-item>
+            </v-carousel>
+            <!-- <v-responsive>
+              <v-img :src="image_url[0]" :class="{ 'd-none': !image }"></v-img>
+            </v-responsive> -->
             <v-file-input
+              multiple
               accept="image/*"
               label="Image"
               @change="loadFile($event)"
               v-model="image"
-            ></v-file-input>
+            >
+              <template v-slot:selection="{ text }">
+                <v-chip small label>
+                  {{ text }}
+                </v-chip>
+              </template>
+            </v-file-input>
             <v-text-field label="Name" v-model="name"></v-text-field>
             <v-text-field
               type="number"
@@ -48,10 +62,22 @@
               label="URL"
               v-model="image_url"
             ></v-text-field>
-            <v-btn dark color="grey darken-4" class="mr-4" @click="submit">
+            <v-btn
+              :loading="loading == 'wait'"
+              dark
+              color="grey darken-4"
+              class="mr-4"
+              @click="submit"
+            >
               add
             </v-btn>
-            <v-btn dark color="grey darken-4" @click="clear">
+            <span v-if="loading == 'wait'">New product adding ...</span>
+            <v-btn
+              v-if="loading != 'wait'"
+              dark
+              color="grey darken-4"
+              @click="clear"
+            >
               clear
             </v-btn>
           </v-form>
@@ -59,16 +85,34 @@
       </v-card>
     </v-container>
 
+    <v-alert
+      v-if="loading == 'done'"
+      dense
+      text
+      type="success"
+      class="mx-auto"
+      max-width="600px"
+    >
+      Successfully added new product
+    </v-alert>
     <v-layout row wrap class="mx-3">
       <v-flex xs12 sm6 lg3 v-for="product in products" :key="product.id">
         <v-card flat class="text-xs ma-3">
-          <v-responsive class="">
-            <v-img :src="product.image_url"></v-img>
-          </v-responsive>
+          <v-carousel height="100%">
+            <v-carousel-item
+              v-for="(url, i) in images_url"
+              :key="i"
+              :src="product[url]"
+              v-if="product[url] != ''"
+            ></v-carousel-item>
+          </v-carousel>
+          <!-- <v-responsive class="">
+            <v-img :src="product.image_url1"></v-img>
+          </v-responsive> -->
           <v-card-text>
             <div class="d-flex justify-space-between">
               <div class="subtitle-1">{{ product.name }}</div>
-              <v-menu bottom right>
+              <v-menu left offset-x>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon>mdi-dots-vertical</v-icon>
@@ -138,43 +182,64 @@ export default {
       name: "",
       price: "",
       stock: "",
-      image_url: "",
+      image_url: [],
+      images_url: [
+        "image_url1",
+        "image_url2",
+        "image_url3",
+        "image_url4",
+        "image_url5"
+      ],
       select: null,
       items: ["T-Shirts", "Shirts", "Pants", "Outers", "Accessories"],
       image: null,
-      file: "",
+      files: "",
       deleteDialog: false
     };
   },
   computed: {
     products() {
       return this.$store.getters.dashboard;
+    },
+    loading() {
+      return this.$store.state.loading;
     }
   },
   methods: {
     submit() {
-      this.$store.dispatch("addProduct", {
-        name: this.name,
-        price: this.price,
-        stock: this.stock,
-        image_url: this.image_url,
-        category: this.select,
-        file: this.file
-      });
-      this.clear();
+      this.$store.commit("SET_LOADING", "wait");
+      this.$store
+        .dispatch("addProduct", {
+          name: this.name,
+          price: this.price,
+          stock: this.stock,
+          image_url: this.image_url,
+          category: this.select,
+          files: this.files
+        })
+        .then(() => this.clear());
     },
     clear() {
       // this.$v.$reset();
       this.name = "";
       this.price = "";
       this.stock = "";
-      this.image_url = "";
+      this.image_url = [];
       this.select = null;
       this.image = null;
     },
     loadFile(event) {
-      this.image_url = URL.createObjectURL(this.image);
-      this.file = event;
+      if (event && event.length == 0) {
+        this.image = null;
+        this.image_url = [];
+        this.files = "";
+      } else if (event && event.length > 0) {
+        this.image_url = [];
+        this.image.forEach(el => {
+          this.image_url.push(URL.createObjectURL(el));
+        });
+        this.files = event; // array
+      }
     },
     deleteProduct(id) {
       this.$store.dispatch("deleteProduct", id);
@@ -183,6 +248,7 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchData");
+    this.$store.commit("SET_LOADING", "");
   }
 };
 </script>

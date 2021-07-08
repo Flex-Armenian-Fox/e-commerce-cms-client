@@ -15,15 +15,6 @@
       </v-card-title>
       <v-card-text>
         <v-form class="px-3">
-          <v-responsive>
-            <v-img :src="image_url"></v-img>
-          </v-responsive>
-          <v-file-input
-            accept="image/*"
-            label="Image"
-            @change="loadFile($event)"
-            v-model="image"
-          ></v-file-input>
           <v-text-field label="Name" v-model="name"></v-text-field>
           <v-text-field
             type="number"

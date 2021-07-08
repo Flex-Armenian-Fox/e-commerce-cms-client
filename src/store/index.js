@@ -14,7 +14,8 @@ export default new Vuex.Store({
     products: [],
     isSignIn: false,
     isAdmin: false,
-    signInFail: false
+    signInFail: false,
+    loading: ""
   },
   mutations: {
     SET_PRODUCTS(state, payload) {
@@ -29,6 +30,9 @@ export default new Vuex.Store({
     },
     SIGNIN_FAIL(state, payload) {
       state.signInFail = payload;
+    },
+    SET_LOADING(state, payload) {
+      state.loading = payload;
     }
   },
   actions: {
@@ -62,8 +66,7 @@ export default new Vuex.Store({
         method: "GET",
         url: "/products",
         headers: {
-          access_token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
+          access_token: localStorage.access_token
         }
       })
         .then(result => {
@@ -80,8 +83,7 @@ export default new Vuex.Store({
         method: "DELETE",
         url: "/products/" + id,
         headers: {
-          access_token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
+          access_token: localStorage.access_token
         }
       })
         .then(result => {
@@ -92,64 +94,85 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
-    addProduct(context, payload) {
-      const { name, price, stock, image_url, category, file } = payload;
-      const formData = new FormData();
-      formData.append("file", file);
+    async addProduct(context, payload) {
+      const { name, price, stock, category, files } = payload;
 
-      axios
-        .post("products/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            access_token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
-          }
-        })
-        .then(result => {
-          console.log(result);
-          axios({
-            method: "POST",
-            url: "/products",
-            headers: {
-              access_token:
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
-            },
-            data: {
-              name,
-              price,
-              stock,
-              image_url,
-              category,
-              path: result.data.path
-            }
-          })
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append("file", files[i]);
+        if (i < files.length - 1) {
+          await axios
+            .post("products/upload", formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                access_token: localStorage.access_token
+              },
+              params: {
+                index: i,
+                lastImage: false
+              }
+            })
             .then(result => {
-              console.log(result);
-              context.dispatch("fetchData");
+              console.log(result, " ", i);
             })
             .catch(err => {
               console.log(err);
             });
-        })
-        .catch(err => {
-          console.log(err);
-        });
+        } else if (i == files.length - 1) {
+          await axios
+            .post("products/upload", formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                access_token: localStorage.access_token
+              },
+              params: {
+                lastImage: true
+              }
+            })
+            .then(result => {
+              console.log(result, "last");
+              axios({
+                method: "POST",
+                url: "/products",
+                headers: {
+                  access_token: localStorage.access_token
+                },
+                data: {
+                  name,
+                  price,
+                  stock,
+                  image_url: result.data.image_url,
+                  category
+                }
+              })
+                .then(result => {
+                  console.log(result);
+                  context.dispatch("fetchData");
+                  context.commit("SET_LOADING", "done");
+                })
+                .catch(err => {
+                  console.log(err);
+                });
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+      }
     },
     editProduct(context, payload) {
-      const { name, price, stock, image_url, category, id } = payload;
+      const { name, price, stock, category, id } = payload;
 
       axios({
         method: "PUT",
         url: "/products/" + id,
         headers: {
-          access_token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFkbWluIiwiaWF0IjoxNjI1MzI5MjczfQ.7ytvi2U-ecdsF65T4jAu5-VG9EeqhZiogCivvfqPQm0"
+          access_token: localStorage.access_token
         },
         data: {
           name,
           price,
           stock,
-          image_url,
           category
         }
       })

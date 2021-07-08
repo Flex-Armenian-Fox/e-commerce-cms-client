@@ -54,9 +54,17 @@
       <v-layout row wrap>
         <v-flex xs12 sm6 lg3 v-for="product in products" :key="product.id">
           <v-card flat class="text-xs ma-3">
-            <v-responsive class="">
+            <v-carousel height="100%">
+              <v-carousel-item
+                v-for="(url, i) in images_url"
+                :key="i"
+                :src="product[url]"
+                v-if="product[url] != ''"
+              ></v-carousel-item>
+            </v-carousel>
+            <!-- <v-responsive class="">
               <v-img :src="product.image_url"></v-img>
-            </v-responsive>
+            </v-responsive> -->
             <v-card-text>
               <div class="d-flex justify-space-between">
                 <div class="subtitle-1">{{ product.name }}</div>
@@ -131,7 +139,14 @@ export default {
     return {
       desc: false,
       filter: "",
-      deleteDialog: false
+      deleteDialog: false,
+      images_url: [
+        "image_url1",
+        "image_url2",
+        "image_url3",
+        "image_url4",
+        "image_url5"
+      ]
     };
   },
   computed: {
