@@ -5,7 +5,7 @@ import Axios from 'axios'
 import Swal from 'sweetalert2'
 
 const axios = Axios.create({
-    baseURL: 'https://commerce-server-meh.herokuapp.com'
+    baseURL: 'http://localhost:3000/'
 })
 
 Vue.use(Vuex)
@@ -139,7 +139,6 @@ export default new Vuex.Store({
   },
   getters: {
     tagFilter: (state) => (tag) => {
-      console.log(tag)
       return state.products.filter(product => product.Tags.some(el => el.name == tag))
     }
   },
